@@ -8,31 +8,31 @@
 import Foundation
 
 class FeedParser: NSObject, XMLParserDelegate {
+    
   fileprivate var rssItems = [(title: String, description: String, pubDate: String)]()
-  
   fileprivate var currentElement = ""
-  
   fileprivate var currentTitle = "" {
     didSet {
       currentTitle = currentTitle.trimmingCharacters(in: CharacterSet.whitespacesAndNewlines)
     }
   }
-  
   fileprivate var currentDescription = "" {
     didSet {
       currentDescription = currentDescription.trimmingCharacters(in: CharacterSet.whitespacesAndNewlines)
     }
   }
-  
   fileprivate var currentPubDate = "" {
     didSet {
       currentPubDate = currentPubDate.trimmingCharacters(in: CharacterSet.whitespacesAndNewlines)
     }
   }
-  
   fileprivate var parserCompletionHandler: (([(title: String, description: String, pubDate: String)]) -> Void)?
   
-  func parseFeed(feedURL: String, completionHandler: (([(title: String, description: String, pubDate: String)]) -> Void)?) -> Void {
+    
+    
+    
+  func parseFeed(feedURL: String,
+                 completionHandler: (([(title: String, description: String, pubDate: String)]) -> Void)?) -> Void {
     
     parserCompletionHandler = completionHandler
     
