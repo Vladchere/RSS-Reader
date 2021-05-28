@@ -8,19 +8,20 @@
 import Foundation
 import FeedKit
 
-public struct FeedClient {
+class FeedLoader {
     
-    static let shared = FeedClient()
+    static let shared = FeedLoader()
     private init() {}
     
-    func fetchFeed(from stringUrl: String, completionHandler: @escaping (RSSFeed?, [RSSFeedItem]?) -> ()){
+    func fetchFeed(from stringUrl: String, completionHandler: @escaping (RSSFeed?) -> ()){
+        
         guard let url = URL(string: stringUrl) else { return }
         let parser = FeedParser(URL: url)
         
-        parser.parseAsync {result in
+        parser.parseAsync { result in
             switch result {
             case .success(let feed):
-                completionHandler(feed.rssFeed, feed.rssFeed?.items)
+                completionHandler(feed.rssFeed)
                 
             case .failure(let error):
                 print(error.localizedDescription)
