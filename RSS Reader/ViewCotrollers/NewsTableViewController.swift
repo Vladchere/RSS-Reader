@@ -18,33 +18,28 @@ class NewsTableViewController: UITableViewController {
     private var fetchingMore = false
     private var items = [RSSFeedItem]()
     private var paginagionCounter = 0
-    private var itemsCount = 0
     private var chunkedFeedItems: [[RSSFeedItem]]?
     
     // MARK: - Lifecycle methods
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        setUI()
-        
         FeedLoader.shared.fetchFeed(from: rssChannel) { rssFeed in
             self.rssFeed = rssFeed
-            self.itemsCount = rssFeed?.items?.count ?? 0
             
             if let feedItems = self.rssFeed?.items {
-                self.chunkedFeedItems = feedItems.chunked(into: 10)
-                self.items = self.chunkedFeedItems?[self.paginagionCounter] ?? []
+                self.chunkedFeedItems = feedItems.chunked(by: 6)
+//                self.items = self.chunkedFeedItems?[self.paginagionCounter] ?? []
             }
             
             DispatchQueue.main.async {
+                self.title = self.rssFeed?.title ?? "News"
                 self.tableView.reloadData()
             }
         }
         
-        tableView.register(
-            UINib(nibName: "LoadingCell", bundle: nil),
-            forCellReuseIdentifier: "loadingCell"
-        )
+        let tableViewLoadingCellNib = UINib(nibName: "LoadingCell", bundle: nil)
+        self.tableView.register(tableViewLoadingCellNib, forCellReuseIdentifier: "loadingCell")
     }
     
     // MARK: - UITableViewDataSource
@@ -58,7 +53,6 @@ class NewsTableViewController: UITableViewController {
         } else if section == 1 && fetchingMore {
             return 1
         }
-        
         return 0
     }
     
@@ -69,62 +63,81 @@ class NewsTableViewController: UITableViewController {
             return cell
         } else {
             let cell = tableView.dequeueReusableCell(withIdentifier: "loadingCell", for: indexPath) as! LoadingCell
-            cell.activityIndicator?.startAnimating()
+            cell.activityIndicator.startAnimating()
             return cell
         }
         
+    }
+    
+    // MARK: - UITableViewDelegate
+    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        if indexPath.section == 0 {
+            return 130
+        } else {
+            return 40
+        }
     }
     
     // MARK: - UIScrollViewDelegate
     override func scrollViewDidScroll(_ scrollView: UIScrollView) {
         let offsetY = scrollView.contentOffset.y
         let contentHeight = scrollView.contentSize.height
-
-        if offsetY > contentHeight - scrollView.frame.height {
-            if !fetchingMore {
-                beginFetch()
-            }
+        
+        if (offsetY > contentHeight - scrollView.frame.height) && !fetchingMore {
+            loadMoreData()
         }
     }
     
     // MARK: - Private methods
-    private func beginFetch() {
-        fetchingMore = true
+    private func loadMoreData() {
         
-        
-        tableView.reloadSections(IndexSet(integer: 1), with: .none)
-        
-        /*
-         Мы используем xml(все items прогружаются сразу)
-         
-         и не можем использовать параметры при запросах
-         (в некоторых запросах можно указать количество загружаемых элементов)
-         
-         сделал пример имитирующий асинхронную загрузку, чтобы показать ячейку с индикатором загрузки
-         (тк использую массивы, данные прогружаются почти мнгновенно и не видно индикатора)
-         */
-        self.paginagionCounter += 1
-        
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
-            if self.paginagionCounter < self.chunkedFeedItems?.count ?? 1 {
-                self.items = self.chunkedFeedItems?[self.paginagionCounter] ?? []
-            }
+        if !self.fetchingMore {
+            self.fetchingMore = true
             
-            self.fetchingMore = false
-            self.tableView.reloadData()
+            tableView.reloadSections(IndexSet(integer: 1), with: .none)
+            
+            /*
+             Мы используем xml(все items прогружаются сразу)
+             
+             и не можем использовать параметры при запросах
+             (в некоторых запросах можно указать количество загружаемых элементов)
+             
+             сделал пример имитирующий фоновую загрузку, чтобы показать ячейку с индикатором загрузки
+             (тк использую массивы, данные прогружаются почти мнгновенно и не видно индикатора)
+             */
+            DispatchQueue.global().async {
+                sleep(2)
+                if ((self.chunkedFeedItems?.count ?? 0) - 1) == self.paginagionCounter {
+                    return
+                } else {
+                    self.items += self.chunkedFeedItems?[self.paginagionCounter] ?? []
+                    print("items count: \(self.items.count)")
+                    self.paginagionCounter += 1
+                }
+                
+                DispatchQueue.main.async {
+                    self.fetchingMore = false
+                    self.tableView.reloadData()
+                    
+                }
+            }
         }
-    }
-    
-    private func setUI() {
-        self.title = "Feed"
-        tableView.rowHeight = 130
     }
 }
 
-extension Array {
-    func chunked(into size: Int) -> [[Element]] {
-        return stride(from: 0, to: count, by: size).map {
-            Array(self[$0 ..< Swift.min($0 + size, count)])
-        }
+extension Collection {
+    
+    func chunked(by distance: Int) -> [[Element]] {
+        precondition(distance > 0, "distance must be greater than 0")
+
+        var index = startIndex
+        let iterator: AnyIterator<Array<Element>> = AnyIterator({
+            let newIndex = self.index(index, offsetBy: distance, limitedBy: self.endIndex) ?? self.endIndex
+            defer { index = newIndex }
+            let range = index ..< newIndex
+            return index != self.endIndex ? Array(self[range]) : nil
+        })
+        
+        return Array(iterator)
     }
 }
