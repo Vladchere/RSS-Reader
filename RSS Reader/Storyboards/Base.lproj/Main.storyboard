@@ -82,7 +82,7 @@
                         </connections>
                     </tableView>
                     <navigationItem key="navigationItem" id="QQ3-DT-xLQ">
-                        <barButtonItem key="rightBarButtonItem" systemItem="add" id="1Ia-Hm-XLd"/>
+                        <barButtonItem key="rightBarButtonItem" systemItem="edit" id="1Ia-Hm-XLd"/>
                     </navigationItem>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="PDk-H3-Ka2" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>

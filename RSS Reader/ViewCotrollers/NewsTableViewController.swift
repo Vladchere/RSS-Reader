@@ -19,17 +19,20 @@ class NewsTableViewController: UITableViewController {
     private var items = [RSSFeedItem]()
     private var paginagionCounter = 0
     private var chunkedFeedItems: [[RSSFeedItem]]?
+    private var isLastItems = false
     
     // MARK: - Lifecycle methods
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        let tableViewLoadingCellNib = UINib(nibName: "LoadingCell", bundle: nil)
+        self.tableView.register(tableViewLoadingCellNib, forCellReuseIdentifier: "loadingCell")
         
         FeedLoader.shared.fetchFeed(from: rssChannel) { rssFeed in
             self.rssFeed = rssFeed
             
             if let feedItems = self.rssFeed?.items {
                 self.chunkedFeedItems = feedItems.chunked(by: 6)
-//                self.items = self.chunkedFeedItems?[self.paginagionCounter] ?? []
             }
             
             DispatchQueue.main.async {
@@ -37,9 +40,6 @@ class NewsTableViewController: UITableViewController {
                 self.tableView.reloadData()
             }
         }
-        
-        let tableViewLoadingCellNib = UINib(nibName: "LoadingCell", bundle: nil)
-        self.tableView.register(tableViewLoadingCellNib, forCellReuseIdentifier: "loadingCell")
     }
     
     // MARK: - UITableViewDataSource
@@ -107,11 +107,18 @@ class NewsTableViewController: UITableViewController {
              */
             DispatchQueue.global().async {
                 sleep(2)
+                
                 if ((self.chunkedFeedItems?.count ?? 0) - 1) == self.paginagionCounter {
-                    return
+                    
+                    if self.isLastItems {
+                        return
+                    } else {
+                        self.items += self.chunkedFeedItems?.last ?? []
+                        self.isLastItems = true
+                    }
+                    
                 } else {
                     self.items += self.chunkedFeedItems?[self.paginagionCounter] ?? []
-                    print("items count: \(self.items.count)")
                     self.paginagionCounter += 1
                 }
                 
