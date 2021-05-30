@@ -7,12 +7,20 @@
 
 import UIKit
 import FeedKit
+import Kingfisher
 
 class NewsViewController: UIViewController {
     
     private let queue = OperationQueue()
     private var operations: [IndexPath: [Operation]] = [:]
+    
     var imageFilter = "CIPhotoEffectFade"
+    
+    private var fetchingMore = false
+    private var items = [RSSFeedItem]()
+    private var paginagionCounter = 0
+    private var chunkedFeedItems: [[RSSFeedItem]]?
+    private var isLastItems = false
     
     // MARK: - IBOutlets
     @IBOutlet weak var tableView: UITableView!
@@ -23,13 +31,16 @@ class NewsViewController: UIViewController {
     // MARK: - Lifecycle methods
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
         self.tableView.delegate = self
         self.tableView.dataSource = self
         
+        let tableViewLoadingCellNib = UINib(nibName: "LoadingCell", bundle: nil)
+        self.tableView.register(tableViewLoadingCellNib, forCellReuseIdentifier: "loadingCell")
+        
         loadFeed()
     }
-
+    
     // MARK: - IBActions
     @IBAction func editChannelAction(_ sender: Any) {
         
@@ -110,9 +121,54 @@ class NewsViewController: UIViewController {
         FeedLoader.shared.fetchFeed(from: url) { rssFeed in
             self.rssFeed = rssFeed
             
+            if let feedItems = self.rssFeed?.items {
+                self.chunkedFeedItems = feedItems.chunked(by: 6)
+            }
+            
             DispatchQueue.main.async {
                 self.title = self.rssFeed?.title ?? "News"
                 self.tableView.reloadData()
+            }
+        }
+    }
+    
+    private func loadMoreData() {
+        
+        if !self.fetchingMore {
+            self.fetchingMore = true
+            
+            tableView.reloadSections(IndexSet(integer: 1), with: .none)
+            
+            /*
+             Мы используем xml(все items прогружаются сразу)
+             
+             и не можем использовать параметры при запросах
+             (в некоторых запросах можно указать количество загружаемых элементов)
+             
+             сделал пример имитирующий фоновую загрузку, чтобы показать ячейку с индикатором загрузки
+             (тк использую массивы, данные прогружаются почти мнгновенно и не видно индикатора)
+             */
+            DispatchQueue.global().async {
+                sleep(2)
+                
+                if ((self.chunkedFeedItems?.count ?? 0) - 1) == self.paginagionCounter {
+                    
+                    if self.isLastItems {
+                        return
+                    } else {
+                        self.items += self.chunkedFeedItems?.last ?? []
+                        self.isLastItems = true
+                    }
+                    
+                } else {
+                    self.items += self.chunkedFeedItems?[self.paginagionCounter] ?? []
+                    self.paginagionCounter += 1
+                }
+                
+                DispatchQueue.main.async {
+                    self.fetchingMore = false
+                    self.tableView.reloadData()
+                }
             }
         }
     }
@@ -121,42 +177,67 @@ class NewsViewController: UIViewController {
 
 // MARK: - UITableViewDataSource
 extension NewsViewController: UITableViewDataSource {
+    
+    func numberOfSections(in tableView: UITableView) -> Int {
+        2
+    }
+    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return self.rssFeed?.items?.count ?? 0
+        if section == 0 {
+            return self.rssFeed?.items?.count ?? 0
+        } else if section == 1 && fetchingMore {
+            return 1
+        }
+        return 0
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath) as! NewsTableViewCell
-        
-        let input = self.rssFeed?.items?[indexPath.row].enclosure?.attributes?.url ?? ""
-        
-        let downloadOpt = DownloadImageOperation(url: URL(string: input)!)
-        let imageFilter = ImageFilterOperation()
-        imageFilter.filter = self.imageFilter
-        
-        imageFilter.addDependency(downloadOpt)
-        imageFilter.completionBlock = {
-            DispatchQueue.main.async {
-                cell.itemTitleLable.text = self.rssFeed?.items?[indexPath.row].title
-                
-                let pubDate = self.rssFeed?.items?[indexPath.row].pubDate
-                cell.itemPubDateLabel.text = DateFormater.shared.format(date: pubDate)
-                
-                cell.newsImageView.image = imageFilter.processedImage
+        if indexPath.section == 0 {
+            
+            let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath) as! NewsTableViewCell
+            
+            let items = self.rssFeed?.items?[indexPath.row]
+            let itemUrl = (self.rssFeed?.items?[indexPath.row].enclosure?.attributes?.url)!
+            //        let titleUrl = self.rssFeed?.image?.url
+            
+            cell.itemTitleLable.text = items?.title
+            
+            let pubDate = items?.pubDate
+            cell.itemPubDateLabel.text = cell.format(date: pubDate)
+            
+            
+            
+            // Using Operation instead
+            let downloadOpt = DownloadImageOperation(url: URL(string: itemUrl)!)
+            let setFilter = ImageFilterOperation()
+            
+            setFilter.imageFilter = self.imageFilter
+            
+            setFilter.addDependency(downloadOpt)
+            setFilter.completionBlock = {
+                DispatchQueue.main.async {
+                    cell.newsImageView.image = setFilter.processedImage
+                }
             }
-        }
-        
-        self.queue.addOperation(downloadOpt)
-        self.queue.addOperation(imageFilter)
-        
-        if let existingOperations = operations[indexPath] {
-            for operation in existingOperations {
-                operation.cancel()
+            self.queue.addOperation(downloadOpt)
+            self.queue.addOperation(setFilter)
+            
+            if let existingOperations = operations[indexPath] {
+                for operation in existingOperations {
+                    operation.cancel()
+                }
             }
+            operations[indexPath] = [setFilter, downloadOpt]
+            
+            cell.newsImageView.kf.setImage(with: URL(string: itemUrl)!)
+            
+            return cell
+            
+        } else {
+            let cell = tableView.dequeueReusableCell(withIdentifier: "loadingCell", for: indexPath) as! LoadingCell
+            cell.activityIndicator.startAnimating()
+            return cell
         }
-        operations[indexPath] = [imageFilter, downloadOpt]
-        
-        return cell
     }
 }
 
@@ -178,13 +259,42 @@ extension NewsViewController: UITableViewDelegate {
             }
         }
     }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: true)
+    }
+}
+
+// MARK: - UIScrollViewDelegate
+extension NewsViewController: UIScrollViewDelegate {
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        let offsetY = scrollView.contentOffset.y
+        let contentHeight = scrollView.contentSize.height
+        
+        if (offsetY > contentHeight - scrollView.frame.height) && !fetchingMore {
+            loadMoreData()
+        }
+    }
 }
 
 
 
-
-
-
+extension Collection {
+    
+    func chunked(by distance: Int) -> [[Element]] {
+        precondition(distance > 0, "distance must be greater than 0")
+        
+        var index = startIndex
+        let iterator: AnyIterator<Array<Element>> = AnyIterator({
+            let newIndex = self.index(index, offsetBy: distance, limitedBy: self.endIndex) ?? self.endIndex
+            defer { index = newIndex }
+            let range = index ..< newIndex
+            return index != self.endIndex ? Array(self[range]) : nil
+        })
+        
+        return Array(iterator)
+    }
+}
 
 
 

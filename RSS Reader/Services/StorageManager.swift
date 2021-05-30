@@ -21,6 +21,7 @@ class StorageManager {
     
     func fetchChannel() -> URL {
         let defaultChannel = URL(string: "https://lenta.ru/rss/articles")!
+        
         guard let data = userDefaults.object(forKey: channelKey) as? Data else { return defaultChannel }
         guard let channel = try? JSONDecoder().decode(URL.self, from: data) else { return defaultChannel }
         

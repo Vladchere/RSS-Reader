@@ -4,5 +4,5 @@ platform :ios, '10.0'
 target 'RSS Reader' do
   use_frameworks!
   pod 'FeedKit', '~> 9.0'
-
+  pod 'Kingfisher', '~> 6.0'
 end

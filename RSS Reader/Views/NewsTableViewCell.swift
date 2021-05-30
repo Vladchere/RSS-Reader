@@ -6,30 +6,46 @@
 //
 
 import UIKit
-import FeedKit
+
+
 
 class NewsTableViewCell: UITableViewCell {
     
     @IBOutlet weak var itemTitleLable: UILabel!
     @IBOutlet weak var itemPubDateLabel: UILabel!
-    @IBOutlet weak var newsImageView: ImageView!
+    @IBOutlet weak var newsImageView: UIImageView!
     
-//    func configure(from item: RSSFeedItem) {
+    
+    func format(date: Date?) -> String {
+        
+        let formatter = DateFormatter()
+        formatter.dateFormat = "HH:mm dd.MM.YY"
+        
+        if let date = date {
+            return formatter.string(from: date)
+        } else {
+            return "No publication date"
+        }
+    }
+    
+//    func addFilter(filter: String) {
+//        let context = CIContext(options: nil)
+//        
+//        guard let image = newsImageView.image else { return print("guard") }
+//        
+//        var inputImage = CIImage(image: image)
+//        
+//        let filters = inputImage!.autoAdjustmentFilters()
 //
-//        itemTitleLable?.text = item.title ?? "No items"
-//
-//        let pubDate = item.pubDate
-//        itemPubDateLabel.text = DateFormater.shared.format(date: pubDate)
-//
-//        let imageUrlString = item.enclosure?.attributes?.url ?? "No image"
-//        newsImageView.fetchImage(from: imageUrlString)
-//    }
-//
-//    func applyFilter(from filter: Filters) {
-//        print(filter)
-//        newsImageView?.image = newsImageView.image?.addFilter(filter: filter)
+//        for filter: CIFilter in filters {
+//            filter.setValue(inputImage, forKey: kCIInputImageKey)
+//            inputImage =  filter.outputImage
+//        }
+//        
+//        let cgImage = context.createCGImage(inputImage!, from: inputImage!.extent)
+//        let currentFilter = CIFilter(name: filter)
+//        currentFilter!.setValue(CIImage(image: UIImage(cgImage: cgImage!)), forKey: kCIInputImageKey)
 //    }
 }
-
 
 
