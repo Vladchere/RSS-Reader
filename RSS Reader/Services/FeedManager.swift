@@ -13,9 +13,8 @@ class FeedLoader {
     static let shared = FeedLoader()
     private init() {}
     
-    func fetchFeed(from stringUrl: String, completionHandler: @escaping (RSSFeed?) -> ()){
+    func fetchFeed(from url: URL, completionHandler: @escaping (RSSFeed?) -> ()){
         
-        guard let url = URL(string: stringUrl) else { return }
         let parser = FeedParser(URL: url)
         
         parser.parseAsync { result in
