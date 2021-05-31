@@ -11,22 +11,26 @@ import Kingfisher
 
 class NewsViewController: UIViewController {
     
+    // MARK: - IBOutlets
+    @IBOutlet weak var tableView: UITableView!
+    @IBOutlet weak var filterSwitch: UISwitch!
+    @IBOutlet var filterButtons: [UIButton]!
+    
+    // MARK: - Private properties
     private let queue = OperationQueue()
     private var operations: [IndexPath: [Operation]] = [:]
     
-    var imageFilter = "CIPhotoEffectFade"
+    private var imageFilter = "CIPhotoEffectFade"
     
-    private var fetchingMore = false
-    private var items = [RSSFeedItem]()
-    private var paginagionCounter = 0
-    private var chunkedFeedItems: [[RSSFeedItem]]?
-    private var isLastItems = false
-    
-    // MARK: - IBOutlets
-    @IBOutlet weak var tableView: UITableView!
-    
-    // MARK: - Private properties
     private var rssFeed: RSSFeed?
+    
+    private var visibleFeedItems = [RSSFeedItem]()
+    
+    private var paginagionCounter = 0
+    private var paginationItems: [[RSSFeedItem]]?
+    
+    private var isLoading = false
+    private var isLastItem = false
     
     // MARK: - Lifecycle methods
     override func viewDidLoad() {
@@ -35,10 +39,12 @@ class NewsViewController: UIViewController {
         self.tableView.delegate = self
         self.tableView.dataSource = self
         
+        //Register Loading Cell
         let tableViewLoadingCellNib = UINib(nibName: "LoadingCell", bundle: nil)
         self.tableView.register(tableViewLoadingCellNib, forCellReuseIdentifier: "loadingCell")
         
         loadFeed()
+        filterButtonsState()
     }
     
     // MARK: - IBActions
@@ -58,20 +64,14 @@ class NewsViewController: UIViewController {
             textField.placeholder = "Enter Resource Rss Link"
         }
         
-        let saveAction = UIAlertAction(
-            title: "Save", style: UIAlertAction.Style.default, handler: { alert -> Void in
-                
+        let saveAction = UIAlertAction(title: "Save", style: UIAlertAction.Style.default, handler: { alert -> Void in
                 let linkTextField = alertController.textFields![0] as UITextField
-                
                 if let urlSource = URL(string: linkTextField.text ?? "") {
-                    
                     if !UIApplication.shared.canOpenURL(urlSource) {
                         self.showAlert(with: "Provided URL is invalid.")
                         return
                     } else {
-                        StorageManager.shared.saveChannel(url: urlSource)
-                        
-                        self.loadFeed()
+                        self.channelUpdate(url: urlSource)
                     }
                 }
             })
@@ -79,27 +79,22 @@ class NewsViewController: UIViewController {
         alertController.addAction(cancelAction)
         alertController.addAction(saveAction)
         
-        
         self.present(alertController, animated: true, completion: nil)
     }
     
     @IBAction func filterButtonPressed(_ sender: UIButton) {
+        
         switch sender.tag {
         case 0:
             self.imageFilter = Filters.Fade.rawValue
-            print("fade")
         case 1:
             self.imageFilter = Filters.Mono.rawValue
-            print("mono")
         case 2:
             self.imageFilter = Filters.Sepia.rawValue
-            print("sepia")
         case 3:
             self.imageFilter = Filters.Blur.rawValue
-            print("blur")
         case 4:
             self.imageFilter = Filters.Chrome.rawValue
-            print("chrom")
         default:
             break
         }
@@ -107,6 +102,9 @@ class NewsViewController: UIViewController {
         tableView.reloadData()
     }
     
+    @IBAction func switchPressed(_ sender: UISwitch) {
+        filterButtonsState()
+    }
     
     // MARK: - Private methods
     private func showAlert(with message:String) {
@@ -122,7 +120,35 @@ class NewsViewController: UIViewController {
             self.rssFeed = rssFeed
             
             if let feedItems = self.rssFeed?.items {
-                self.chunkedFeedItems = feedItems.chunked(by: 6)
+                self.paginationItems = feedItems.chunked(by: 6)
+            }
+            
+            DispatchQueue.main.async {
+                self.title = self.rssFeed?.title ?? "News"
+                self.tableView.reloadData()
+            }
+        }
+    }
+    
+    private func channelUpdate(url: URL) {
+        
+        self.operations = [:]
+        self.imageFilter = "CIPhotoEffectFade"
+        self.rssFeed = RSSFeed()
+        self.visibleFeedItems = []
+        self.paginagionCounter = 0
+        self.paginationItems = [[]]
+        self.isLoading = false
+        self.isLastItem = false
+        
+        StorageManager.shared.saveChannel(url: url)
+        
+        FeedLoader.shared.fetchFeed(from: url) { rssFeed in
+            self.rssFeed = rssFeed
+            
+            if let feedItems = self.rssFeed?.items {
+                self.paginationItems = feedItems.chunked(by: 6)
+                self.loadMoreData()
             }
             
             DispatchQueue.main.async {
@@ -134,42 +160,65 @@ class NewsViewController: UIViewController {
     
     private func loadMoreData() {
         
-        if !self.fetchingMore {
-            self.fetchingMore = true
+        if !self.isLoading {
             
-            tableView.reloadSections(IndexSet(integer: 1), with: .none)
+            self.isLoading = true
             
-            /*
-             Мы используем xml(все items прогружаются сразу)
-             
-             и не можем использовать параметры при запросах
-             (в некоторых запросах можно указать количество загружаемых элементов)
-             
-             сделал пример имитирующий фоновую загрузку, чтобы показать ячейку с индикатором загрузки
-             (тк использую массивы, данные прогружаются почти мнгновенно и не видно индикатора)
-             */
             DispatchQueue.global().async {
-                sleep(2)
-                
-                if ((self.chunkedFeedItems?.count ?? 0) - 1) == self.paginagionCounter {
+                sleep(1)
+                if ((self.paginationItems?.count ?? 0) - 1) == self.paginagionCounter {
                     
-                    if self.isLastItems {
+                    if self.isLastItem {
                         return
                     } else {
-                        self.items += self.chunkedFeedItems?.last ?? []
-                        self.isLastItems = true
+                        self.visibleFeedItems += self.paginationItems?.last ?? []
+                        self.isLastItem = true
                     }
                     
                 } else {
-                    self.items += self.chunkedFeedItems?[self.paginagionCounter] ?? []
+                    self.visibleFeedItems += self.paginationItems?[self.paginagionCounter] ?? []
                     self.paginagionCounter += 1
                 }
-                
                 DispatchQueue.main.async {
-                    self.fetchingMore = false
                     self.tableView.reloadData()
+                    self.isLoading = false
                 }
             }
+        }
+    }
+    
+    private func filterButtonsState() {
+        if filterSwitch.isOn {
+            filterButtons.forEach { button in
+                button.isEnabled = true
+            }
+        } else {
+            filterButtons.forEach { button in
+                button.isEnabled = false
+            }
+        }
+    }
+    
+    private func format(date: Date?) -> String {
+        
+        let formatter = DateFormatter()
+        formatter.dateFormat = "HH:mm dd.MM.YY"
+        
+        if let date = date {
+            return formatter.string(from: date)
+        } else {
+            return "No publication date"
+        }
+    }
+    
+    // MARK: - Navigation
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "openPage" {
+            let indexPath: IndexPath = self.tableView.indexPathForSelectedRow!
+            let url = self.visibleFeedItems[indexPath.row].guid?.value
+            
+            let feedItemVC = segue.destination as! FeedItemWebViewController
+            feedItemVC.selectedFeedURL = url
         }
     }
 }
@@ -184,63 +233,74 @@ extension NewsViewController: UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if section == 0 {
-            return self.rssFeed?.items?.count ?? 0
-        } else if section == 1 && fetchingMore {
+            return self.visibleFeedItems.count
+        } else if section == 1 {
             return 1
+        } else {
+            return 0
         }
-        return 0
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        
         if indexPath.section == 0 {
-            
             let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath) as! NewsTableViewCell
             
-            let items = self.rssFeed?.items?[indexPath.row]
-            let itemUrl = (self.rssFeed?.items?[indexPath.row].enclosure?.attributes?.url)!
-            //        let titleUrl = self.rssFeed?.image?.url
+            let items = self.visibleFeedItems[indexPath.row]
+            let itemUrl = self.visibleFeedItems[indexPath.row].enclosure?.attributes?.url
+            let defaultImage = #imageLiteral(resourceName: "rss2")
+
+            cell.itemPubDateLabel.text = format(date: items.pubDate)
+            cell.itemTitleLable.text = items.title
             
-            cell.itemTitleLable.text = items?.title
-            
-            let pubDate = items?.pubDate
-            cell.itemPubDateLabel.text = cell.format(date: pubDate)
-            
-            
-            
-            // Using Operation instead
-            let downloadOpt = DownloadImageOperation(url: URL(string: itemUrl)!)
-            let setFilter = ImageFilterOperation()
-            
-            setFilter.imageFilter = self.imageFilter
-            
-            setFilter.addDependency(downloadOpt)
-            setFilter.completionBlock = {
-                DispatchQueue.main.async {
-                    cell.newsImageView.image = setFilter.processedImage
+            if let urlString = itemUrl, let url = URL(string: urlString) {
+                
+                if filterSwitch.isOn {
+                    
+                    let downloadOpt = DownloadImageOperation(url: url)
+                    let setFilter = ImageFilterOperation()
+                    
+                    setFilter.imageFilter = self.imageFilter
+                    
+                    setFilter.addDependency(downloadOpt)
+                    setFilter.completionBlock = {
+                        DispatchQueue.main.async {
+                            cell.newsImageView.image = setFilter.processedImage
+                        }
+                    }
+                    self.queue.addOperation(downloadOpt)
+                    self.queue.addOperation(setFilter)
+                    
+                    if let existingOperations = operations[indexPath] {
+                        for operation in existingOperations {
+                            operation.cancel()
+                        }
+                    }
+                    operations[indexPath] = [setFilter, downloadOpt]
+                } else {
+                    
+                    cell.newsImageView.kf.setImage(with: url)
                 }
+                
+                return cell
+            } else {
+                cell.newsImageView.image = defaultImage
+                
+                return cell
             }
-            self.queue.addOperation(downloadOpt)
-            self.queue.addOperation(setFilter)
-            
-            if let existingOperations = operations[indexPath] {
-                for operation in existingOperations {
-                    operation.cancel()
-                }
-            }
-            operations[indexPath] = [setFilter, downloadOpt]
-            
-            cell.newsImageView.kf.setImage(with: URL(string: itemUrl)!)
-            
-            return cell
-            
         } else {
             let cell = tableView.dequeueReusableCell(withIdentifier: "loadingCell", for: indexPath) as! LoadingCell
-            cell.activityIndicator.startAnimating()
+            
+            if self.visibleFeedItems.count == self.rssFeed?.items?.count {
+                cell.isHidden = true
+            } else {
+                cell.activityIndicator.startAnimating()
+            }
+            
             return cell
         }
     }
 }
-
 
 // MARK: - UITableViewDelegate
 extension NewsViewController: UITableViewDelegate {
@@ -271,7 +331,7 @@ extension NewsViewController: UIScrollViewDelegate {
         let offsetY = scrollView.contentOffset.y
         let contentHeight = scrollView.contentSize.height
         
-        if (offsetY > contentHeight - scrollView.frame.height) && !fetchingMore {
+        if (offsetY > contentHeight - scrollView.frame.height * 4) && !isLoading {
             loadMoreData()
         }
     }
@@ -279,22 +339,6 @@ extension NewsViewController: UIScrollViewDelegate {
 
 
 
-extension Collection {
-    
-    func chunked(by distance: Int) -> [[Element]] {
-        precondition(distance > 0, "distance must be greater than 0")
-        
-        var index = startIndex
-        let iterator: AnyIterator<Array<Element>> = AnyIterator({
-            let newIndex = self.index(index, offsetBy: distance, limitedBy: self.endIndex) ?? self.endIndex
-            defer { index = newIndex }
-            let range = index ..< newIndex
-            return index != self.endIndex ? Array(self[range]) : nil
-        })
-        
-        return Array(iterator)
-    }
-}
 
 
 
@@ -305,12 +349,4 @@ extension Collection {
 
 
 
-/*
- // MARK: - Navigation
- 
- // In a storyboard-based application, you will often want to do a little preparation before navigation
- override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
- // Get the new view controller using segue.destination.
- // Pass the selected object to the new view controller.
- }
- */
+

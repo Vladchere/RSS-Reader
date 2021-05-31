@@ -17,6 +17,7 @@ enum Filters: String, CaseIterable {
 }
 
 class ImageFilterOperation: Operation {
+    
     let context = CIContext(options: nil)
     var processedImage: UIImage?
     var imageFilter = "CIPhotoEffectFade"
