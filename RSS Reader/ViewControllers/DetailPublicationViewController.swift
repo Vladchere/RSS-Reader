@@ -8,7 +8,7 @@
 import UIKit
 import WebKit
 
-class FeedItemWebViewController: UIViewController {
+class DetailPublicationViewController: UIViewController {
     
     @IBOutlet var webView: WKWebView!
     
@@ -16,8 +16,6 @@ class FeedItemWebViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        selectedFeedURL =  selectedFeedURL?.replacingOccurrences(of: " ", with:"")
-        selectedFeedURL =  selectedFeedURL?.replacingOccurrences(of: "\n", with:"")
         
         if let stringUrl = selectedFeedURL, let url = URL(string: stringUrl) {
             webView.load(URLRequest(url: url))

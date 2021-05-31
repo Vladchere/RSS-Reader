@@ -9,7 +9,9 @@ import UIKit
 import FeedKit
 import Kingfisher
 
-class NewsViewController: UIViewController {
+class RSSFeedPhotoEditorViewController: UIViewController {
+    
+    private var presenter: RSSFeedPhotoEditorPresenter!
     
     // MARK: - IBOutlets
     @IBOutlet weak var tableView: UITableView!
@@ -44,11 +46,12 @@ class NewsViewController: UIViewController {
         self.tableView.register(tableViewLoadingCellNib, forCellReuseIdentifier: "loadingCell")
         
         loadFeed()
+        
         filterButtonsState()
     }
     
     // MARK: - IBActions
-    @IBAction func editChannelAction(_ sender: Any) {
+    @IBAction func editChannelPressed(_ sender: Any) {
         
         let alertController = UIAlertController(
             title: "Add new rss source",
@@ -76,8 +79,8 @@ class NewsViewController: UIViewController {
                 }
             })
         
-        alertController.addAction(cancelAction)
         alertController.addAction(saveAction)
+        alertController.addAction(cancelAction)
         
         self.present(alertController, animated: true, completion: nil)
     }
@@ -107,13 +110,13 @@ class NewsViewController: UIViewController {
     }
     
     // MARK: - Private methods
-    private func showAlert(with message:String) {
+    private func showAlert(with message: String) {
         let alert = UIAlertController(title: "Error", message: message, preferredStyle: UIAlertController.Style.alert)
         alert.addAction(UIAlertAction(title: "OK", style: UIAlertAction.Style.default, handler: nil))
         self.present(alert, animated: true, completion: nil)
     }
     
-    private func loadFeed() {
+    func loadFeed() {
         let url = StorageManager.shared.fetchChannel()
         
         FeedLoader.shared.fetchFeed(from: url) { rssFeed in
@@ -130,7 +133,7 @@ class NewsViewController: UIViewController {
         }
     }
     
-    private func channelUpdate(url: URL) {
+    internal func channelUpdate(url: URL) {
         
         self.operations = [:]
         self.imageFilter = "CIPhotoEffectFade"
@@ -158,7 +161,7 @@ class NewsViewController: UIViewController {
         }
     }
     
-    private func loadMoreData() {
+    internal func loadMoreData() {
         
         if !self.isLoading {
             
@@ -199,7 +202,7 @@ class NewsViewController: UIViewController {
         }
     }
     
-    private func format(date: Date?) -> String {
+    private func formatDate(date: Date?) -> String {
         
         let formatter = DateFormatter()
         formatter.dateFormat = "HH:mm dd.MM.YY"
@@ -217,7 +220,7 @@ class NewsViewController: UIViewController {
             let indexPath: IndexPath = self.tableView.indexPathForSelectedRow!
             let url = self.visibleFeedItems[indexPath.row].guid?.value
             
-            let feedItemVC = segue.destination as! FeedItemWebViewController
+            let feedItemVC = segue.destination as! DetailPublicationViewController
             feedItemVC.selectedFeedURL = url
         }
     }
@@ -225,7 +228,7 @@ class NewsViewController: UIViewController {
 
 
 // MARK: - UITableViewDataSource
-extension NewsViewController: UITableViewDataSource {
+extension RSSFeedPhotoEditorViewController: UITableViewDataSource {
     
     func numberOfSections(in tableView: UITableView) -> Int {
         2
@@ -244,13 +247,13 @@ extension NewsViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
         if indexPath.section == 0 {
-            let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath) as! NewsTableViewCell
+            let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath) as! PublicationCell
             
             let items = self.visibleFeedItems[indexPath.row]
             let itemUrl = self.visibleFeedItems[indexPath.row].enclosure?.attributes?.url
             let defaultImage = #imageLiteral(resourceName: "rss2")
 
-            cell.itemPubDateLabel.text = format(date: items.pubDate)
+            cell.itemPubDateLabel.text = formatDate(date: items.pubDate)
             cell.itemTitleLable.text = items.title
             
             if let urlString = itemUrl, let url = URL(string: urlString) {
@@ -277,6 +280,7 @@ extension NewsViewController: UITableViewDataSource {
                         }
                     }
                     operations[indexPath] = [setFilter, downloadOpt]
+                    
                 } else {
                     
                     cell.newsImageView.kf.setImage(with: url)
@@ -303,7 +307,7 @@ extension NewsViewController: UITableViewDataSource {
 }
 
 // MARK: - UITableViewDelegate
-extension NewsViewController: UITableViewDelegate {
+extension RSSFeedPhotoEditorViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         if indexPath.section == 0 {
             return 130
@@ -326,7 +330,7 @@ extension NewsViewController: UITableViewDelegate {
 }
 
 // MARK: - UIScrollViewDelegate
-extension NewsViewController: UIScrollViewDelegate {
+extension RSSFeedPhotoEditorViewController: UIScrollViewDelegate {
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         let offsetY = scrollView.contentOffset.y
         let contentHeight = scrollView.contentSize.height
@@ -334,6 +338,15 @@ extension NewsViewController: UIScrollViewDelegate {
         if (offsetY > contentHeight - scrollView.frame.height * 4) && !isLoading {
             loadMoreData()
         }
+    }
+}
+
+extension RSSFeedPhotoEditorViewController: RSSFeedPhotoEditorViewProtocol {
+    func showFeeds() {
+        <#code#>
+    }
+    func showPaginationFeeds() {
+        <#code#>
     }
 }
 
