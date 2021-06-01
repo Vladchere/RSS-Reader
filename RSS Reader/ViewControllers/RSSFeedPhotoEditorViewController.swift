@@ -11,28 +11,26 @@ import Kingfisher
 
 class RSSFeedPhotoEditorViewController: UIViewController {
     
-    private var presenter: RSSFeedPhotoEditorPresenter!
-    
-    // MARK: - IBOutlets
+    // MARK: - IB Outlets
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var filterSwitch: UISwitch!
     @IBOutlet var filterButtons: [UIButton]!
     
-    // MARK: - Private properties
-    private let queue = OperationQueue()
-    private var operations: [IndexPath: [Operation]] = [:]
+    // MARK: - internal properties
+    internal let queue = OperationQueue()
+    internal var operations: [IndexPath: [Operation]] = [:]
     
-    private var imageFilter = "CIPhotoEffectFade"
+    internal var rssFeed: RSSFeed?
+    internal var visibleFeedItems = [RSSFeedItem]()
     
-    private var rssFeed: RSSFeed?
+    internal var isLoading = false
     
-    private var visibleFeedItems = [RSSFeedItem]()
+    internal var imageFilter = "CIPhotoEffectFade"
     
+    // MARK: - private properties
     private var paginagionCounter = 0
-    private var paginationItems: [[RSSFeedItem]]?
     
-    private var isLoading = false
-    private var isLastItem = false
+    private var paginationItems: [[RSSFeedItem]]?
     
     // MARK: - Lifecycle methods
     override func viewDidLoad() {
@@ -46,47 +44,15 @@ class RSSFeedPhotoEditorViewController: UIViewController {
         self.tableView.register(tableViewLoadingCellNib, forCellReuseIdentifier: "loadingCell")
         
         loadFeed()
-        
         filterButtonsState()
     }
     
-    // MARK: - IBActions
+    // MARK: - IB Actions
     @IBAction func editChannelPressed(_ sender: Any) {
-        
-        let alertController = UIAlertController(
-            title: "Add new rss source",
-            message: "", preferredStyle: UIAlertController.Style.alert
-        )
-        
-        let cancelAction = UIAlertAction(
-            title: "Cancel", style: UIAlertAction.Style.cancel,
-            handler: {(action : UIAlertAction!) -> Void in }
-        )
-        
-        alertController.addTextField { (textField : UITextField!) -> Void in
-            textField.placeholder = "Enter Resource Rss Link"
-        }
-        
-        let saveAction = UIAlertAction(title: "Save", style: UIAlertAction.Style.default, handler: { alert -> Void in
-                let linkTextField = alertController.textFields![0] as UITextField
-                if let urlSource = URL(string: linkTextField.text ?? "") {
-                    if !UIApplication.shared.canOpenURL(urlSource) {
-                        self.showAlert(with: "Provided URL is invalid.")
-                        return
-                    } else {
-                        self.channelUpdate(url: urlSource)
-                    }
-                }
-            })
-        
-        alertController.addAction(saveAction)
-        alertController.addAction(cancelAction)
-        
-        self.present(alertController, animated: true, completion: nil)
+        newSourceAlert()
     }
     
     @IBAction func filterButtonPressed(_ sender: UIButton) {
-        
         switch sender.tag {
         case 0:
             self.imageFilter = Filters.Fade.rawValue
@@ -101,7 +67,6 @@ class RSSFeedPhotoEditorViewController: UIViewController {
         default:
             break
         }
-        
         tableView.reloadData()
     }
     
@@ -110,13 +75,7 @@ class RSSFeedPhotoEditorViewController: UIViewController {
     }
     
     // MARK: - Private methods
-    private func showAlert(with message: String) {
-        let alert = UIAlertController(title: "Error", message: message, preferredStyle: UIAlertController.Style.alert)
-        alert.addAction(UIAlertAction(title: "OK", style: UIAlertAction.Style.default, handler: nil))
-        self.present(alert, animated: true, completion: nil)
-    }
-    
-    func loadFeed() {
+    private func loadFeed() {
         let url = StorageManager.shared.fetchChannel()
         
         FeedLoader.shared.fetchFeed(from: url) { rssFeed in
@@ -133,16 +92,24 @@ class RSSFeedPhotoEditorViewController: UIViewController {
         }
     }
     
-    internal func channelUpdate(url: URL) {
+    private func filterButtonsState() {
+        filterButtons.forEach { button in
+            button.isEnabled = filterSwitch.isOn
+        }
         
-        self.operations = [:]
-        self.imageFilter = "CIPhotoEffectFade"
+        DispatchQueue.main.async {
+            self.tableView.reloadData()
+        }
+    }
+    
+    
+    // MARK: - internal methods
+    internal func channelUpdate(url: URL) {
         self.rssFeed = RSSFeed()
-        self.visibleFeedItems = []
+        self.paginationItems?.removeAll()
+        self.visibleFeedItems.removeAll()
         self.paginagionCounter = 0
-        self.paginationItems = [[]]
         self.isLoading = false
-        self.isLastItem = false
         
         StorageManager.shared.saveChannel(url: url)
         
@@ -162,26 +129,20 @@ class RSSFeedPhotoEditorViewController: UIViewController {
     }
     
     internal func loadMoreData() {
-        
         if !self.isLoading {
-            
             self.isLoading = true
             
+            // Fake loading new items
             DispatchQueue.global().async {
-                sleep(1)
+                sleep(2)
                 if ((self.paginationItems?.count ?? 0) - 1) == self.paginagionCounter {
-                    
-                    if self.isLastItem {
-                        return
-                    } else {
-                        self.visibleFeedItems += self.paginationItems?.last ?? []
-                        self.isLastItem = true
-                    }
-                    
+                    self.visibleFeedItems += self.paginationItems?.last ?? []
+                    return
                 } else {
                     self.visibleFeedItems += self.paginationItems?[self.paginagionCounter] ?? []
                     self.paginagionCounter += 1
                 }
+                
                 DispatchQueue.main.async {
                     self.tableView.reloadData()
                     self.isLoading = false
@@ -190,20 +151,7 @@ class RSSFeedPhotoEditorViewController: UIViewController {
         }
     }
     
-    private func filterButtonsState() {
-        if filterSwitch.isOn {
-            filterButtons.forEach { button in
-                button.isEnabled = true
-            }
-        } else {
-            filterButtons.forEach { button in
-                button.isEnabled = false
-            }
-        }
-    }
-    
-    private func formatDate(date: Date?) -> String {
-        
+    internal func formatDate(date: Date?) -> String {
         let formatter = DateFormatter()
         formatter.dateFormat = "HH:mm dd.MM.YY"
         
@@ -225,141 +173,3 @@ class RSSFeedPhotoEditorViewController: UIViewController {
         }
     }
 }
-
-
-// MARK: - UITableViewDataSource
-extension RSSFeedPhotoEditorViewController: UITableViewDataSource {
-    
-    func numberOfSections(in tableView: UITableView) -> Int {
-        2
-    }
-    
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        if section == 0 {
-            return self.visibleFeedItems.count
-        } else if section == 1 {
-            return 1
-        } else {
-            return 0
-        }
-    }
-    
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        
-        if indexPath.section == 0 {
-            let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath) as! PublicationCell
-            
-            let items = self.visibleFeedItems[indexPath.row]
-            let itemUrl = self.visibleFeedItems[indexPath.row].enclosure?.attributes?.url
-            let defaultImage = #imageLiteral(resourceName: "rss2")
-
-            cell.itemPubDateLabel.text = formatDate(date: items.pubDate)
-            cell.itemTitleLable.text = items.title
-            
-            if let urlString = itemUrl, let url = URL(string: urlString) {
-                
-                if filterSwitch.isOn {
-                    
-                    let downloadOpt = DownloadImageOperation(url: url)
-                    let setFilter = ImageFilterOperation()
-                    
-                    setFilter.imageFilter = self.imageFilter
-                    
-                    setFilter.addDependency(downloadOpt)
-                    setFilter.completionBlock = {
-                        DispatchQueue.main.async {
-                            cell.newsImageView.image = setFilter.processedImage
-                        }
-                    }
-                    self.queue.addOperation(downloadOpt)
-                    self.queue.addOperation(setFilter)
-                    
-                    if let existingOperations = operations[indexPath] {
-                        for operation in existingOperations {
-                            operation.cancel()
-                        }
-                    }
-                    operations[indexPath] = [setFilter, downloadOpt]
-                    
-                } else {
-                    
-                    cell.newsImageView.kf.setImage(with: url)
-                }
-                
-                return cell
-            } else {
-                cell.newsImageView.image = defaultImage
-                
-                return cell
-            }
-        } else {
-            let cell = tableView.dequeueReusableCell(withIdentifier: "loadingCell", for: indexPath) as! LoadingCell
-            
-            if self.visibleFeedItems.count == self.rssFeed?.items?.count {
-                cell.isHidden = true
-            } else {
-                cell.activityIndicator.startAnimating()
-            }
-            
-            return cell
-        }
-    }
-}
-
-// MARK: - UITableViewDelegate
-extension RSSFeedPhotoEditorViewController: UITableViewDelegate {
-    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        if indexPath.section == 0 {
-            return 130
-        } else {
-            return 40
-        }
-    }
-    
-    func tableView(_ tableView: UITableView, didEndDisplaying cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-        if let operations = operations[indexPath] {
-            for operation in operations {
-                operation.cancel()
-            }
-        }
-    }
-    
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        tableView.deselectRow(at: indexPath, animated: true)
-    }
-}
-
-// MARK: - UIScrollViewDelegate
-extension RSSFeedPhotoEditorViewController: UIScrollViewDelegate {
-    func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        let offsetY = scrollView.contentOffset.y
-        let contentHeight = scrollView.contentSize.height
-        
-        if (offsetY > contentHeight - scrollView.frame.height * 4) && !isLoading {
-            loadMoreData()
-        }
-    }
-}
-
-extension RSSFeedPhotoEditorViewController: RSSFeedPhotoEditorViewProtocol {
-    func showFeeds() {
-        <#code#>
-    }
-    func showPaginationFeeds() {
-        <#code#>
-    }
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-

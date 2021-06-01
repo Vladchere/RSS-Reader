@@ -10,6 +10,7 @@ import Foundation
 class StorageManager {
     
     static let shared = StorageManager()
+    private init() {}
     
     private let userDefaults = UserDefaults.standard
     private let channelKey = "channel"

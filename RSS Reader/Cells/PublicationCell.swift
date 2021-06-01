@@ -12,7 +12,6 @@ class PublicationCell: UITableViewCell {
     @IBOutlet weak var itemTitleLable: UILabel!
     @IBOutlet weak var itemPubDateLabel: UILabel!
     @IBOutlet weak var newsImageView: UIImageView!
-    
 }
 
 

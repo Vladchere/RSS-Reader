@@ -21,8 +21,4 @@ class DetailPublicationViewController: UIViewController {
             webView.load(URLRequest(url: url))
         }
     }
-    
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear( animated )
-    }
 }
