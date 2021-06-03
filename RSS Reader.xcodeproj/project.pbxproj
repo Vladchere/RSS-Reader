@@ -8,45 +8,29 @@
 
 /* Begin PBXBuildFile section */
 		1375703A6FC5C1D093A2C68E /* Pods_RSS_Reader.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F57FC2291357A09669DD4028 /* Pods_RSS_Reader.framework */; };
-		3415B2E0265FFC3800C17E8A /* FeedManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3415B2DF265FFC3800C17E8A /* FeedManager.swift */; };
-		342937BD26661EFD006FF926 /* RSSFeedPhotoEditorViewControllerExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 342937BC26661EFD006FF926 /* RSSFeedPhotoEditorViewControllerExtensions.swift */; };
-		3454063A265ED3DE00227560 /* PublicationCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34540639265ED3DE00227560 /* PublicationCell.swift */; };
-		34608D9C26637FD300A8AA47 /* StorageManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34608D9B26637FD300A8AA47 /* StorageManager.swift */; };
-		34608DA42663B23900A8AA47 /* RSSFeedPhotoEditorViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34608DA32663B23900A8AA47 /* RSSFeedPhotoEditorViewController.swift */; };
-		34608DA62663D0C100A8AA47 /* DownloadImageOperator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34608DA52663D0C100A8AA47 /* DownloadImageOperator.swift */; };
-		34608DA82663D12000A8AA47 /* ImageFilterOperator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34608DA72663D12000A8AA47 /* ImageFilterOperator.swift */; };
-		34608DAA26641FB700A8AA47 /* AsyncOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34608DA926641FB700A8AA47 /* AsyncOperation.swift */; };
-		346C5C202662476B0082F363 /* LoadingCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 346C5C1E2662476B0082F363 /* LoadingCell.swift */; };
-		346C5C212662476B0082F363 /* LoadingCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 346C5C1F2662476B0082F363 /* LoadingCell.xib */; };
+		34098ABE26691FD400662C8D /* Feed.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34098ABD26691FD400662C8D /* Feed.swift */; };
+		34098AC0266923D200662C8D /* MainPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34098ABF266923D200662C8D /* MainPresenter.swift */; };
+		34098AC626692E5A00662C8D /* MainViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 34098AC526692E5A00662C8D /* MainViewController.xib */; };
+		34098AC82669359500662C8D /* ModuleBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34098AC72669359500662C8D /* ModuleBuilder.swift */; };
+		34608DA42663B23900A8AA47 /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34608DA32663B23900A8AA47 /* MainViewController.swift */; };
 		347F32F1265D46A800CE3804 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 347F32F0265D46A800CE3804 /* AppDelegate.swift */; };
 		347F32F3265D46A800CE3804 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 347F32F2265D46A800CE3804 /* SceneDelegate.swift */; };
-		347F32F8265D46A800CE3804 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 347F32F6265D46A800CE3804 /* Main.storyboard */; };
 		347F32FA265D46A900CE3804 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 347F32F9265D46A900CE3804 /* Assets.xcassets */; };
 		347F32FD265D46A900CE3804 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 347F32FB265D46A900CE3804 /* LaunchScreen.storyboard */; };
-		34AA54842664F898009AD576 /* CollectionExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34AA54832664F898009AD576 /* CollectionExtension.swift */; };
-		34AA5487266537C7009AD576 /* DetailPublicationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34AA5486266537C7009AD576 /* DetailPublicationViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		3415B2DF265FFC3800C17E8A /* FeedManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedManager.swift; sourceTree = "<group>"; };
-		342937BC26661EFD006FF926 /* RSSFeedPhotoEditorViewControllerExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RSSFeedPhotoEditorViewControllerExtensions.swift; sourceTree = "<group>"; };
-		34540639265ED3DE00227560 /* PublicationCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PublicationCell.swift; sourceTree = "<group>"; };
-		34608D9B26637FD300A8AA47 /* StorageManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StorageManager.swift; sourceTree = "<group>"; };
-		34608DA32663B23900A8AA47 /* RSSFeedPhotoEditorViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RSSFeedPhotoEditorViewController.swift; sourceTree = "<group>"; };
-		34608DA52663D0C100A8AA47 /* DownloadImageOperator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DownloadImageOperator.swift; sourceTree = "<group>"; };
-		34608DA72663D12000A8AA47 /* ImageFilterOperator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageFilterOperator.swift; sourceTree = "<group>"; };
-		34608DA926641FB700A8AA47 /* AsyncOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AsyncOperation.swift; sourceTree = "<group>"; };
-		346C5C1E2662476B0082F363 /* LoadingCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingCell.swift; sourceTree = "<group>"; };
-		346C5C1F2662476B0082F363 /* LoadingCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = LoadingCell.xib; sourceTree = "<group>"; };
+		34098ABD26691FD400662C8D /* Feed.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Feed.swift; sourceTree = "<group>"; };
+		34098ABF266923D200662C8D /* MainPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainPresenter.swift; sourceTree = "<group>"; };
+		34098AC526692E5A00662C8D /* MainViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = MainViewController.xib; sourceTree = "<group>"; };
+		34098AC72669359500662C8D /* ModuleBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModuleBuilder.swift; sourceTree = "<group>"; };
+		34608DA32663B23900A8AA47 /* MainViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewController.swift; sourceTree = "<group>"; };
 		347F32ED265D46A800CE3804 /* RSS Reader.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "RSS Reader.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		347F32F0265D46A800CE3804 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		347F32F2265D46A800CE3804 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
-		347F32F7265D46A800CE3804 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		347F32F9265D46A900CE3804 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		347F32FC265D46A900CE3804 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		347F32FE265D46A900CE3804 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		34AA54832664F898009AD576 /* CollectionExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionExtension.swift; sourceTree = "<group>"; };
-		34AA5486266537C7009AD576 /* DetailPublicationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailPublicationViewController.swift; sourceTree = "<group>"; };
 		ACF901584548657A991FE9F4 /* Pods-RSS Reader.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RSS Reader.debug.xcconfig"; path = "Target Support Files/Pods-RSS Reader/Pods-RSS Reader.debug.xcconfig"; sourceTree = "<group>"; };
 		E92DAB30DB3B23354728FCFD /* Pods-RSS Reader.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RSS Reader.release.xcconfig"; path = "Target Support Files/Pods-RSS Reader/Pods-RSS Reader.release.xcconfig"; sourceTree = "<group>"; };
 		F57FC2291357A09669DD4028 /* Pods_RSS_Reader.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_RSS_Reader.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -64,75 +48,48 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		3415B2E1265FFC3E00C17E8A /* Services */ = {
+		34098AC126692C3500662C8D /* MainModule */ = {
 			isa = PBXGroup;
 			children = (
-				3415B2DF265FFC3800C17E8A /* FeedManager.swift */,
-				34608D9B26637FD300A8AA47 /* StorageManager.swift */,
+				34098AC326692C5E00662C8D /* Model */,
+				34098AC426692C6F00662C8D /* Presenter */,
+				34098AC226692C5000662C8D /* View */,
 			);
-			path = Services;
+			path = MainModule;
 			sourceTree = "<group>";
 		};
-		34540637265ED3A600227560 /* Sources */ = {
+		34098AC226692C5000662C8D /* View */ = {
 			isa = PBXGroup;
 			children = (
-				347F32F9265D46A900CE3804 /* Assets.xcassets */,
+				34608DA32663B23900A8AA47 /* MainViewController.swift */,
+				34098AC526692E5A00662C8D /* MainViewController.xib */,
 			);
-			path = Sources;
+			path = View;
 			sourceTree = "<group>";
 		};
-		34608DAB26641FC100A8AA47 /* Operation */ = {
+		34098AC326692C5E00662C8D /* Model */ = {
 			isa = PBXGroup;
 			children = (
-				34608DA52663D0C100A8AA47 /* DownloadImageOperator.swift */,
-				34608DA72663D12000A8AA47 /* ImageFilterOperator.swift */,
-				34608DA926641FB700A8AA47 /* AsyncOperation.swift */,
+				34098ABD26691FD400662C8D /* Feed.swift */,
 			);
-			path = Operation;
+			path = Model;
 			sourceTree = "<group>";
 		};
-		347BD63726655EF8009C6D4C /* App */ = {
+		34098AC426692C6F00662C8D /* Presenter */ = {
 			isa = PBXGroup;
 			children = (
-				347F32F0265D46A800CE3804 /* AppDelegate.swift */,
-				347F32F2265D46A800CE3804 /* SceneDelegate.swift */,
-				347F32FE265D46A900CE3804 /* Info.plist */,
+				34098ABF266923D200662C8D /* MainPresenter.swift */,
 			);
-			path = App;
-			sourceTree = "<group>";
-		};
-		347BD63E26656673009C6D4C /* Storyboards */ = {
-			isa = PBXGroup;
-			children = (
-				347F32F6265D46A800CE3804 /* Main.storyboard */,
-				347F32FB265D46A900CE3804 /* LaunchScreen.storyboard */,
-			);
-			path = Storyboards;
-			sourceTree = "<group>";
-		};
-		347BD640266569F1009C6D4C /* ViewControllers */ = {
-			isa = PBXGroup;
-			children = (
-				34608DA32663B23900A8AA47 /* RSSFeedPhotoEditorViewController.swift */,
-				34AA5486266537C7009AD576 /* DetailPublicationViewController.swift */,
-			);
-			path = ViewControllers;
-			sourceTree = "<group>";
-		};
-		347BD64126656A02009C6D4C /* Cells */ = {
-			isa = PBXGroup;
-			children = (
-				34540639265ED3DE00227560 /* PublicationCell.swift */,
-				346C5C1E2662476B0082F363 /* LoadingCell.swift */,
-				346C5C1F2662476B0082F363 /* LoadingCell.xib */,
-			);
-			path = Cells;
+			path = Presenter;
 			sourceTree = "<group>";
 		};
 		347F32E4265D46A800CE3804 = {
 			isa = PBXGroup;
 			children = (
 				347F32EF265D46A800CE3804 /* RSS Reader */,
+				347F32FE265D46A900CE3804 /* Info.plist */,
+				347F32FB265D46A900CE3804 /* LaunchScreen.storyboard */,
+				347F32F9265D46A900CE3804 /* Assets.xcassets */,
 				347F32EE265D46A800CE3804 /* Products */,
 				E5E172B3E18D92B408700136 /* Pods */,
 				58294F98E47640800908349A /* Frameworks */,
@@ -150,25 +107,12 @@
 		347F32EF265D46A800CE3804 /* RSS Reader */ = {
 			isa = PBXGroup;
 			children = (
-				347BD640266569F1009C6D4C /* ViewControllers */,
-				34AA54852664FE0D009AD576 /* Extensions */,
-				347BD64126656A02009C6D4C /* Cells */,
-				3415B2E1265FFC3E00C17E8A /* Services */,
-				34608DAB26641FC100A8AA47 /* Operation */,
-				347BD63E26656673009C6D4C /* Storyboards */,
-				347BD63726655EF8009C6D4C /* App */,
-				34540637265ED3A600227560 /* Sources */,
+				347F32F0265D46A800CE3804 /* AppDelegate.swift */,
+				347F32F2265D46A800CE3804 /* SceneDelegate.swift */,
+				34098AC72669359500662C8D /* ModuleBuilder.swift */,
+				34098AC126692C3500662C8D /* MainModule */,
 			);
 			path = "RSS Reader";
-			sourceTree = "<group>";
-		};
-		34AA54852664FE0D009AD576 /* Extensions */ = {
-			isa = PBXGroup;
-			children = (
-				34AA54832664F898009AD576 /* CollectionExtension.swift */,
-				342937BC26661EFD006FF926 /* RSSFeedPhotoEditorViewControllerExtensions.swift */,
-			);
-			path = Extensions;
 			sourceTree = "<group>";
 		};
 		58294F98E47640800908349A /* Frameworks */ = {
@@ -249,8 +193,7 @@
 			files = (
 				347F32FD265D46A900CE3804 /* LaunchScreen.storyboard in Resources */,
 				347F32FA265D46A900CE3804 /* Assets.xcassets in Resources */,
-				346C5C212662476B0082F363 /* LoadingCell.xib in Resources */,
-				347F32F8265D46A800CE3804 /* Main.storyboard in Resources */,
+				34098AC626692E5A00662C8D /* MainViewController.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -303,33 +246,18 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				34608DAA26641FB700A8AA47 /* AsyncOperation.swift in Sources */,
 				347F32F1265D46A800CE3804 /* AppDelegate.swift in Sources */,
-				346C5C202662476B0082F363 /* LoadingCell.swift in Sources */,
-				342937BD26661EFD006FF926 /* RSSFeedPhotoEditorViewControllerExtensions.swift in Sources */,
-				34608DA42663B23900A8AA47 /* RSSFeedPhotoEditorViewController.swift in Sources */,
-				34608D9C26637FD300A8AA47 /* StorageManager.swift in Sources */,
+				34098ABE26691FD400662C8D /* Feed.swift in Sources */,
+				34608DA42663B23900A8AA47 /* MainViewController.swift in Sources */,
 				347F32F3265D46A800CE3804 /* SceneDelegate.swift in Sources */,
-				3415B2E0265FFC3800C17E8A /* FeedManager.swift in Sources */,
-				34AA54842664F898009AD576 /* CollectionExtension.swift in Sources */,
-				3454063A265ED3DE00227560 /* PublicationCell.swift in Sources */,
-				34608DA82663D12000A8AA47 /* ImageFilterOperator.swift in Sources */,
-				34AA5487266537C7009AD576 /* DetailPublicationViewController.swift in Sources */,
-				34608DA62663D0C100A8AA47 /* DownloadImageOperator.swift in Sources */,
+				34098AC0266923D200662C8D /* MainPresenter.swift in Sources */,
+				34098AC82669359500662C8D /* ModuleBuilder.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXVariantGroup section */
-		347F32F6265D46A800CE3804 /* Main.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				347F32F7265D46A800CE3804 /* Base */,
-			);
-			name = Main.storyboard;
-			sourceTree = "<group>";
-		};
 		347F32FB265D46A900CE3804 /* LaunchScreen.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (
@@ -392,6 +320,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				INFOPLIST_FILE = "RSS Reader/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 14.5;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
@@ -447,6 +376,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				INFOPLIST_FILE = "RSS Reader/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 14.5;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
@@ -465,7 +395,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = D28YKYJC2T;
-				INFOPLIST_FILE = "RSS Reader/App/Info.plist";
+				INFOPLIST_FILE = "RSS Reader/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -485,7 +415,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = D28YKYJC2T;
-				INFOPLIST_FILE = "RSS Reader/App/Info.plist";
+				INFOPLIST_FILE = "RSS Reader/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
