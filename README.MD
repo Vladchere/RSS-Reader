@@ -24,4 +24,4 @@ Advanced Concurrency: Async Operations [links](https://uynguyen.github.io/2020/0
 You can specify the data source (replace the RSS feed).
 
 
-<img src="https://github.com/Vladchere/RSS-Reader/blob/feature/mvc-architecture/RSS%20Reader/Sources/sampleRss2.gif" width="300" height="650" />
+<img src="https://github.com/Vladchere/RSS-Reader/blob/feature/mvc-architecture/RSS%20Reader/Sources/sample4.gif" width="300" height="650" />
