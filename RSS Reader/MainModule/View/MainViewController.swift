@@ -28,7 +28,6 @@ class MainViewController: UIViewController {
     }
 }
 
-
 extension MainViewController: MainViewProtocol {
     func setFeed(from url: String) {
         self.feed.text = url
