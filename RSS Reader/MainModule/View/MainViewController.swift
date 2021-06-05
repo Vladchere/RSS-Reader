@@ -11,13 +11,12 @@ import Kingfisher
 
 class MainViewController: UIViewController {
 
+    // MARK: - IB Outlets
+    @IBOutlet weak var feed: UILabel!
+    
     var presenter: MainViewPresenterProtocol!
     
-    // MARK: - IB Outlets
-    @IBOutlet weak var tableView: UITableView!
-    @IBOutlet weak var feed: UILabel!
 
-    
     // MARK: - Lifecycle methods
     override func viewDidLoad() {
         super.viewDidLoad()
