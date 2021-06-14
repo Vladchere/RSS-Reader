@@ -2,8 +2,9 @@
 //  SceneDelegate.swift
 //  RSS Reader
 //
-//  Created by Vladislav Cheremisov on 25.05.2021.
+//  Created by Vladislav Cheremisov on 08.06.2021.
 //
+
 import UIKit
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
@@ -12,13 +13,13 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
 
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
-   
+        
         guard let windowScene = (scene as? UIWindowScene) else { return }
         
         window = UIWindow(frame: windowScene.coordinateSpace.bounds)
         window?.windowScene = windowScene
         
-        let mainVC = ModuleBuilder.createMainModule()
+        let mainVC = ModelBuilder.createMainModule()
         let navBar = UINavigationController(rootViewController: mainVC)
         
         window?.rootViewController = navBar
@@ -55,3 +56,4 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
 
 }
+

@@ -2,31 +2,31 @@
 //  MainPresenter.swift
 //  RSS Reader
 //
-//  Created by Vladislav Cheremisov on 03.06.2021.
+//  Created by Vladislav Cheremisov on 09.06.2021.
 //
 
 import Foundation
 
-protocol MainViewProtocol: AnyObject {
-    func setFeed(from url: String)
+protocol MainViewProtocol {
+    func setGreeting(greeting: String)
 }
 
-protocol MainViewPresenterProtocol: AnyObject {
-    init(view: MainViewProtocol, feed: Feed)
-    func showFeed()
+protocol MainViewPresenterProtocol {
+    init(view: MainViewProtocol, person: Person)
+    func showGreeting()
 }
 
 class MainPresenter: MainViewPresenterProtocol {
     let view: MainViewProtocol
-    let feed: Feed
+    let person: Person
     
-    required init(view: MainViewProtocol, feed: Feed) {
+    required init(view: MainViewProtocol, person: Person) {
         self.view = view
-        self.feed = feed
+        self.person = person
     }
     
-    func showFeed() {
-        let url = "https://lenta.ru/rss/articles"
-        self.view.setFeed(from: url)
+    func showGreeting() {
+        let greeting = self.person.firstName + " " + self.person.lastName
+        self.view.setGreeting(greeting: greeting)
     }
 }
