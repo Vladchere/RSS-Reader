@@ -23,8 +23,8 @@
 		348FAC7E266F2BC5009965D6 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 348FAC7D266F2BC5009965D6 /* Assets.xcassets */; };
 		348FAC81266F2BC5009965D6 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 348FAC7F266F2BC5009965D6 /* LaunchScreen.storyboard */; };
 		348FAC8C266F2BC5009965D6 /* RSS_ReaderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 348FAC8B266F2BC5009965D6 /* RSS_ReaderTests.swift */; };
-		348FAC97266F2BC5009965D6 /* RSS_ReaderUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 348FAC96266F2BC5009965D6 /* RSS_ReaderUITests.swift */; };
 		34998A87267A4FEB00BC7945 /* Router.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34998A86267A4FEB00BC7945 /* Router.swift */; };
+		34998A89267B9AC600BC7945 /* RouterTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34998A88267B9AC600BC7945 /* RouterTest.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -66,9 +66,8 @@
 		348FAC8B266F2BC5009965D6 /* RSS_ReaderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RSS_ReaderTests.swift; sourceTree = "<group>"; };
 		348FAC8D266F2BC5009965D6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		348FAC92266F2BC5009965D6 /* RSS ReaderUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "RSS ReaderUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
-		348FAC96266F2BC5009965D6 /* RSS_ReaderUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RSS_ReaderUITests.swift; sourceTree = "<group>"; };
-		348FAC98266F2BC5009965D6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		34998A86267A4FEB00BC7945 /* Router.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Router.swift; sourceTree = "<group>"; };
+		34998A88267B9AC600BC7945 /* RouterTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RouterTest.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -169,6 +168,7 @@
 			isa = PBXGroup;
 			children = (
 				34872FD82676FC3300610558 /* MainPresenterTest.swift */,
+				34998A88267B9AC600BC7945 /* RouterTest.swift */,
 			);
 			path = TestMainModule;
 			sourceTree = "<group>";
@@ -178,7 +178,6 @@
 			children = (
 				348FAC73266F2BC4009965D6 /* RSS Reader */,
 				348FAC8A266F2BC5009965D6 /* RSS ReaderTests */,
-				348FAC95266F2BC5009965D6 /* RSS ReaderUITests */,
 				348FAC72266F2BC4009965D6 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -219,15 +218,6 @@
 				348FAC8D266F2BC5009965D6 /* Info.plist */,
 			);
 			path = "RSS ReaderTests";
-			sourceTree = "<group>";
-		};
-		348FAC95266F2BC5009965D6 /* RSS ReaderUITests */ = {
-			isa = PBXGroup;
-			children = (
-				348FAC96266F2BC5009965D6 /* RSS_ReaderUITests.swift */,
-				348FAC98266F2BC5009965D6 /* Info.plist */,
-			);
-			path = "RSS ReaderUITests";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -380,6 +370,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				348FAC8C266F2BC5009965D6 /* RSS_ReaderTests.swift in Sources */,
+				34998A89267B9AC600BC7945 /* RouterTest.swift in Sources */,
 				34872FD92676FC3300610558 /* MainPresenterTest.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -388,7 +379,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				348FAC97266F2BC5009965D6 /* RSS_ReaderUITests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
